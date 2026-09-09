@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+<title>停車場入口三維編輯器－高擬真互動版</title>
+<style>
+:root{--ink:#1d2633;--muted:#738196;--line:#dfe6ef;--card:#fff;--blue:#1677ff;--orange:#ffae24;--bg:#eef3f8;--shadow:0 14px 35px rgba(20,35,55,.15)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",Arial,sans-serif;color:var(--ink)}
+button,input,select{font:inherit}.app{max-width:1024px;margin:auto;min-height:100dvh;background:linear-gradient(#f2f6fa,#eaf0f5)}
+.status{display:flex;justify-content:space-between;padding:10px 18px 7px;font-weight:800;font-size:18px}.url{margin:0 16px 10px;border-radius:25px;background:#dfe6ef;display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:17px}.url b{flex:1;text-align:center}
+.topbar{background:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #e7edf4;box-shadow:0 2px 8px rgba(20,30,45,.04)}.brand{display:flex;gap:12px;align-items:center}.cube{width:30px;height:30px;background:linear-gradient(135deg,#078af8,#355df6);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}.brand strong{font-size:20px;display:block}.brand small{color:var(--muted)}.top-actions{display:flex;gap:9px;align-items:center}.top-actions button{border:0;background:#eef4fa;padding:8px 10px;border-radius:11px;font-weight:800;color:#2d4157}.saved{color:#389a3f;font-weight:800}
+.stagewrap{padding:13px 13px 0}.stagecard{border-radius:20px;overflow:hidden;background:#bec9d5;box-shadow:var(--shadow);position:relative}.stage{position:relative;aspect-ratio:941/821;min-height:430px;overflow:hidden;background:linear-gradient(#b8dcff 0 42%,#84928e 42% 100%);touch-action:none}.fallback{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.stage.engine-ready .fallback{display:none}#webgl{position:absolute;inset:0;width:100%;height:100%;z-index:1}.photoMatch{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:4;pointer-events:none;opacity:0;transition:opacity .2s}.photoMatch.on{opacity:.34}
+.scene-title{position:absolute;left:15px;top:15px;z-index:7;background:rgba(43,52,64,.92);color:#fff;padding:10px 14px;border-radius:18px;box-shadow:var(--shadow)}.scene-title b{display:block;font-size:15px}.scene-title small{color:#d5dde7}.rightTools{position:absolute;right:12px;top:86px;z-index:8;display:flex;flex-direction:column;gap:9px}.rbtn{width:56px;height:54px;border:0;border-radius:16px;background:rgba(49,59,72,.93);color:#fff;font-size:12px;font-weight:800;box-shadow:var(--shadow)}.axis{position:absolute;left:12px;bottom:12px;z-index:7;width:72px;height:72px;border-radius:18px;background:rgba(49,59,72,.9);box-shadow:var(--shadow);color:#fff;font-size:12px;font-weight:900}.axis span:nth-child(1){position:absolute;left:30px;top:8px;color:#62d66b}.axis span:nth-child(2){position:absolute;right:10px;bottom:18px;color:#ff5c5c}.axis span:nth-child(3){position:absolute;left:10px;bottom:9px;color:#4b91ff}.engineBadge{position:absolute;right:81px;top:15px;z-index:7;background:rgba(255,255,255,.93);padding:8px 12px;border-radius:999px;font-size:12px;font-weight:900;box-shadow:var(--shadow)}
+.labels{position:absolute;inset:0;z-index:6;pointer-events:none}.label{position:absolute;transform:translate(-50%,-50%);background:rgba(44,53,65,.91);color:#fff;border-radius:15px;padding:8px 12px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;box-shadow:0 7px 18px rgba(10,20,35,.18);white-space:nowrap}.ldot{width:10px;height:10px;border-radius:50%}.error{position:absolute;inset:auto 12px 12px 95px;z-index:9;background:rgba(38,48,61,.94);color:#fff;padding:9px 12px;border-radius:12px;font-size:12px;display:none}.error.show{display:block}
+.panel{margin:12px 13px 94px;background:#fff;border-radius:20px;box-shadow:var(--shadow);overflow:hidden}.panelHead{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);gap:10px}.panelHead b{font-size:16px}.tabs{display:flex;gap:7px;flex-wrap:wrap}.tabs button{border:0;border-radius:10px;background:#eaf0f6;padding:8px 11px;font-weight:800;color:#425268}.tabs button.active{background:#ddecff;color:#095bcf}.panelBody{display:grid;grid-template-columns:.75fr 1.25fr;min-height:320px}.layers{padding:9px;border-right:1px solid var(--line);max-height:510px;overflow:auto}.layer{padding:9px 10px;border-radius:12px;display:flex;align-items:center;gap:9px;cursor:pointer}.layer.active{background:#edf5ff}.layer .meta{min-width:0;flex:1}.layer strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.layer small{color:var(--muted)}.eye{border:0;background:#edf2f7;padding:6px 8px;border-radius:9px;font-size:11px}.props{padding:14px}.props h3{margin:0 0 12px;display:flex;gap:9px;align-items:center}.props h3 small{margin-left:auto;color:var(--muted);font-size:11px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}label{display:block;color:var(--muted);font-size:11px;font-weight:800;margin-bottom:5px}input,select{width:100%;border:1px solid var(--line);border-radius:11px;background:#fff;padding:10px 11px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.btnrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.btn{border:0;border-radius:13px;padding:11px 14px;background:#eef3f8;font-weight:900;color:#2c3a4b}.btn.primary{background:var(--blue);color:#fff}.btn.danger{background:#fff0f0;color:#c72d2d}.help{margin-top:12px;background:#f7fbff;padding:11px 12px;border-radius:13px;color:#647286;font-size:12px;line-height:1.55}
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid #dce4ee;display:grid;grid-template-columns:repeat(6,1fr);padding:7px 7px calc(8px + env(safe-area-inset-bottom));gap:5px}.tool{border:0;background:transparent;border-radius:13px;padding:10px 2px;color:#435166;font-size:11px;font-weight:900}.tool.active{background:#e7f1ff;color:#095bcf}.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);z-index:60;background:rgba(34,43,55,.94);color:#fff;padding:9px 13px;border-radius:11px;font-weight:800;display:none}.toast.show{display:block}
+@media(max-width:760px){.top-actions .desktop{display:none}.panelBody{grid-template-columns:1fr}.layers{border-right:0;border-bottom:1px solid var(--line);max-height:230px}.stage{min-height:460px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="status"><span>9:41</span><span>▮▮▮  無線網路  100</span></div>
+  <div class="url"><span>🔒</span><b>停車場三維編輯器</b><span>↻</span><span>⋮</span></div>
+  <div class="topbar">
+    <div class="brand"><div class="cube"></div><div><strong>三維空間</strong><small>設計 · 建模 · 視覺化</small></div></div>
+    <div class="top-actions"><span class="saved" id="saveState">● 已儲存</span><button id="photoBtn">照片對位</button><button class="desktop" id="shareBtn">分享</button><button id="menuBtn">☰</button></div>
+  </div>
+
+  <div class="stagewrap"><div class="stagecard"><div class="stage" id="stage">
+    <img class="fallback" src="assets/現場參考圖.jpg" alt="高擬真參考畫面"/>
+    <div id="webgl"></div>
+    <img id="photoMatch" class="photoMatch" src="assets/現場參考圖.jpg" alt="照片對位參考"/>
+    <div class="scene-title"><b>停車場斜坡入口</b><small>三維編輯器 · 高擬真互動場景</small></div>
+    <div class="engineBadge" id="engineBadge">三維場景載入中…</div>
+    <div class="rightTools">
+      <button class="rbtn" id="homeBtn">主視角</button>
+      <button class="rbtn" id="topBtn">俯視</button>
+      <button class="rbtn" id="labelsBtn">標籤</button>
+      <button class="rbtn" id="fullBtn">全螢幕</button>
+    </div>
+    <div class="axis"><span>高</span><span>右</span><span>前</span></div>
+    <div class="labels" id="labels"></div>
+    <div class="error" id="errorBox">三維引擎未載入時會先顯示高擬真預覽圖；發布到網站後即可使用完整三維功能。</div>
+  </div></div></div>
+
+  <div class="panel">
+    <div class="panelHead"><b>圖層與屬性</b><div class="tabs"><button class="active" data-tab="both">全部</button><button data-tab="layers">圖層</button><button data-tab="props">屬性</button></div></div>
+    <div class="panelBody" id="panelBody"><div class="layers" id="layers"></div><div class="props" id="props"></div></div>
+  </div>
+</div>
+
+<div class="bottom" id="bottomTools">
+  <button class="tool active" data-tool="select">選取</button>
+  <button class="tool" data-tool="move">移動</button>
+  <button class="tool" data-tool="rotate">旋轉</button>
+  <button class="tool" data-tool="scale">縮放</button>
+  <button class="tool" data-tool="measure">量測</button>
+  <button class="tool" data-tool="more">更多</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.161.0/build/three.module.min.js","three/addons/":"https://unpkg.com/three@0.161.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
+
+const stage=document.getElementById('stage'), host=document.getElementById('webgl'), labelsHost=document.getElementById('labels');
+const layersEl=document.getElementById('layers'), propsEl=document.getElementById('props'), toastEl=document.getElementById('toast');
+const engineBadge=document.getElementById('engineBadge'), photoMatch=document.getElementById('photoMatch');
+const modules=new Map(); let selected=null, boxHelper=null, labelsOn=true, photoMode=0, currentTool='select';
+
+function toast(s){toastEl.textContent=s;toastEl.classList.add('show');clearTimeout(toastEl._t);toastEl._t=setTimeout(()=>toastEl.classList.remove('show'),1500)}
+function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');draw(x,w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;return t}
+const tileTex=canvasTex(512,512,(c,w,h)=>{c.fillStyle='#e8e7e2';c.fillRect(0,0,w,h);c.strokeStyle='#c6c6c1';c.lineWidth=2;for(let y=0;y<h;y+=22){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}for(let x=0;x<w;x+=46){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke()}c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=1;for(let y=1;y<h;y+=22){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}});
+const paverTex=canvasTex(512,512,(c,w,h)=>{c.fillStyle='#6d7479';c.fillRect(0,0,w,h);for(let y=0;y<h;y+=30){for(let x=-20;x<w;x+=38){const xx=x+((y/30)%2)*19;c.fillStyle=((x+y)%76===0)?'#777e83':'#70777c';c.fillRect(xx+2,y+2,34,26);c.strokeStyle='#525a60';c.strokeRect(xx+2,y+2,34,26);c.strokeStyle='rgba(255,255,255,.17)';c.beginPath();c.moveTo(xx+8,y+9);c.lineTo(xx+18,y+18);c.lineTo(xx+29,y+8);c.stroke()}}});
+const stoneTex=canvasTex(512,512,(c,w,h)=>{c.fillStyle='#8e918c';c.fillRect(0,0,w,h);for(let y=0;y<h;y+=54){const off=((y/54)%2)*42;for(let x=-off;x<w;x+=84){c.fillStyle=['#9a9b95','#848781','#92958f'][((x+y)/10|0)%3];c.fillRect(x+2,y+2,80,50);c.strokeStyle='#666b67';c.strokeRect(x+2,y+2,80,50)}}});
+const concreteTex=canvasTex(256,256,(c,w,h)=>{c.fillStyle='#a9adb0';c.fillRect(0,0,w,h);for(let i=0;i<1800;i++){const g=140+Math.random()*50|0;c.fillStyle=`rgba(${g},${g},${g},.18)`;c.fillRect(Math.random()*w,Math.random()*h,1,1)}});
+const facadeTex=canvasTex(512,512,(c,w,h)=>{c.fillStyle='#8e969f';c.fillRect(0,0,w,h);for(let y=30;y<h;y+=92){for(let x=28;x<w;x+=88){c.fillStyle='#273746';c.fillRect(x,y,48,58);c.fillStyle='#a8b0b6';c.fillRect(x+52,y,10,58)}c.fillStyle='#747d86';c.fillRect(0,y+65,w,10)}});
+const signTex=canvasTex(1024,256,(c,w,h)=>{c.fillStyle='#2d3540';c.fillRect(0,0,w,h);c.fillStyle='#fff';c.font='44px Arial';c.fillText('←  停車場',75,96);c.font='26px sans-serif';c.fillText('停車場出入口',165,145);c.strokeStyle='#d43838';c.lineWidth=8;c.beginPath();c.arc(710,105,38,0,Math.PI*2);c.stroke();c.beginPath();c.arc(835,105,38,0,Math.PI*2);c.stroke();c.fillStyle='#fff';c.font='bold 34px Arial';c.fillText('15',688,117);c.font='bold 28px Arial';c.fillText('2.1m',805,116)});
+
+tileTex.repeat.set(4,7);paverTex.repeat.set(5,10);stoneTex.repeat.set(2,6);concreteTex.repeat.set(3,3);facadeTex.repeat.set(2,3);
+const mats={tile:new THREE.MeshStandardMaterial({map:tileTex,roughness:.88,metalness:0}),paver:new THREE.MeshStandardMaterial({map:paverTex,roughness:.9}),stone:new THREE.MeshStandardMaterial({map:stoneTex,roughness:.95}),concrete:new THREE.MeshStandardMaterial({map:concreteTex,roughness:.9}),metal:new THREE.MeshStandardMaterial({color:0x2f3a46,roughness:.35,metalness:.75}),dark:new THREE.MeshStandardMaterial({color:0x29323d,roughness:.52,metalness:.3}),green:new THREE.MeshStandardMaterial({color:0x4d7f4e,roughness:.95}),trunk:new THREE.MeshStandardMaterial({color:0x6d4e32,roughness:1}),sign:new THREE.MeshStandardMaterial({map:signTex,roughness:.48,metalness:.2}),cream:new THREE.MeshStandardMaterial({color:0xd7c692,roughness:.9})};
+
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0xb8d9f2); scene.fog=new THREE.Fog(0xb8d9f2,40,90);
+const camera=new THREE.PerspectiveCamera(48,1,.1,160);const defaultCam={p:new THREE.Vector3(10.5,8.7,22),t:new THREE.Vector3(0,-.5,-5)};camera.position.copy(defaultCam.p);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;host.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.copy(defaultCam.t);controls.enableDamping=true;controls.dampingFactor=.08;controls.minDistance=8;controls.maxDistance=52;controls.maxPolarAngle=Math.PI*.49;controls.update();
+const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.85);scene.add(transform);transform.addEventListener('dragging-changed',e=>controls.enabled=!e.value);transform.addEventListener('objectChange',()=>{updateBox();renderProps();markDirty()});
+const hemi=new THREE.HemisphereLight(0xddeeff,0x475342,2.2);scene.add(hemi);const sun=new THREE.DirectionalLight(0xfff1d1,4.2);sun.position.set(-14,22,17);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-28;sun.shadow.camera.right=28;sun.shadow.camera.top=28;sun.shadow.camera.bottom=-28;sun.shadow.bias=-.00025;scene.add(sun);scene.add(new THREE.AmbientLight(0xffffff,.35));
+
+function qgeom(quads){const pos=[],uv=[];for(const q of quads){const a=q.p, t=q.uv||[[0,0],[1,0],[1,1],[0,1]],idx=[0,1,2,0,2,3];for(const i of idx){pos.push(a[i].x,a[i].y,a[i].z);uv.push(t[i][0],t[i][1])}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.computeVertexNormals();return g}
+function rampY(z){const zF=5,zB=-12,drop=-4;if(z>=zF)return 0;if(z<=zB)return drop;return drop*((zF-z)/(zF-zB))}
+function rampGeom(w=9.2,zF=6,zB=-13,drop=-4.1,th=.25){const x=w/2,yF=0,yB=drop;const a={x:-x,y:yF,z:zF},b={x:x,y:yF,z:zF},c={x:x,y:yB,z:zB},d={x:-x,y:yB,z:zB};const a2={...a,y:a.y-th},b2={...b,y:b.y-th},c2={...c,y:c.y-th},d2={...d,y:d.y-th};return qgeom([{p:[a,b,c,d],uv:[[0,0],[5,0],[5,11],[0,11]]},{p:[a2,d2,c2,b2]},{p:[a,a2,b2,b]},{p:[d,c,c2,d2]},{p:[a,d,d2,a2]},{p:[b,b2,c2,c]}])}
+function wallGeom(side=1,xInner=4.9,th=.42,zF=6.2,zB=-13.3,topF=3.45,topB=2.8){const xi=side*xInner,xo=side*(xInner+th),bF=rampY(zF)-.05,bB=rampY(zB)-.05;const A=new THREE.Vector3(xi,bF,zF),B=new THREE.Vector3(xi,bB,zB),C=new THREE.Vector3(xi,topB,zB),D=new THREE.Vector3(xi,topF,zF);const A2=new THREE.Vector3(xo,bF,zF),B2=new THREE.Vector3(xo,bB,zB),C2=new THREE.Vector3(xo,topB,zB),D2=new THREE.Vector3(xo,topF,zF);return qgeom([{p:[A,B,C,D],uv:[[0,0],[10,0],[10,6],[0,6]]},{p:[D2,C2,B2,A2],uv:[[0,6],[10,6],[10,0],[0,0]]},{p:[D,C,C2,D2],uv:[[0,0],[10,0],[10,.5],[0,.5]]},{p:[A,A2,B2,B]},{p:[A,D,D2,A2]},{p:[B,B2,C2,C]}])}
+function mesh(g,m,cast=true){const x=new THREE.Mesh(g,m);x.castShadow=cast;x.receiveShadow=true;return x}
+function register(id,name,type,obj,color,labelOffset=new THREE.Vector3()){obj.name=name;obj.userData.moduleId=id;obj.traverse(o=>o.userData.moduleId=id);scene.add(obj);const label=document.createElement('div');label.className='label';label.innerHTML=`<span class="ldot" style="background:${color}"></span><span>${name}</span>`;labelsHost.appendChild(label);modules.set(id,{id,name,type,obj,color,label,labelOffset,baseVisible:true});return obj}
+
+// Forecourt pavement
+const fore=register('pavement','前方地坪','地坪',mesh(qgeom([{p:[new THREE.Vector3(-8.3,-.08,13),new THREE.Vector3(8.3,-.08,13),new THREE.Vector3(7.2,-.08,5.9),new THREE.Vector3(-7.2,-.08,5.9)],uv:[[0,0],[9,0],[9,5],[0,5]]}]),mats.paver),'#a55cff',new THREE.Vector3(0,.45,9));
+// main ramp
+const ramp=register('ramp','主斜坡','斜坡',mesh(rampGeom(),mats.paver),'#54d85b',new THREE.Vector3(0,.45,-3.6));
+// side walls
+const wl=register('wallL','左側斜坡牆','牆面',mesh(wallGeom(-1),mats.tile),'#57a7ff',new THREE.Vector3(-4.7,2.8,-3.2));
+const wr=register('wallR','右側斜坡牆','牆面',mesh(wallGeom(1),mats.tile),'#57a7ff',new THREE.Vector3(4.7,2.8,-3.2));
+// rear wall and beam
+const rear=new THREE.Group();const rearWall=mesh(new THREE.BoxGeometry(9.8,5.6,.45),mats.tile);rearWall.position.set(0,-1.25,-13.6);rear.add(rearWall);const beam=mesh(new THREE.BoxGeometry(10.2,1,.8),mats.tile);beam.position.set(0,2.05,-13.2);rear.add(beam);register('backWall','地下入口後牆','牆面',rear,'#57a7ff',new THREE.Vector3(0,2.7,-13));
+// sign
+const sign=mesh(new THREE.BoxGeometry(6.2,1.15,.18),mats.sign);sign.position.set(0,1.7,-12.65);register('sign','停車場招牌','招牌',sign,'#a55cff',new THREE.Vector3(0,.9,0));
+// convex mirror
+const mirrorG=new THREE.Group();const rim=mesh(new THREE.TorusGeometry(.39,.055,12,48),new THREE.MeshStandardMaterial({color:0xd43b32,roughness:.45,metalness:.3}));rim.rotation.x=Math.PI/2;const disk=mesh(new THREE.CircleGeometry(.34,48),new THREE.MeshStandardMaterial({color:0x425466,metalness:.8,roughness:.15}));disk.position.z=.01;mirrorG.add(rim,disk);mirrorG.position.set(1.25,.65,-12.25);mirrorG.rotation.y=.08;register('mirror','凸面鏡','設備',mirrorG,'#f05b4f',new THREE.Vector3(.2,.7,0));
+// wall lights
+const wallLights=new THREE.Group();for(let i=0;i<6;i++){const z=3-i*3.2;const y=rampY(z)+.7;for(const sx of [-1,1]){const box=mesh(new THREE.BoxGeometry(.14,.28,.08),new THREE.MeshStandardMaterial({color:0x1f252b,roughness:.45,metalness:.6}));box.position.set(sx*4.68,y,z);box.rotation.y=sx<0?Math.PI/2:-Math.PI/2;wallLights.add(box)}}register('wallLights','牆面燈具','設備',wallLights,'#35cbd8',new THREE.Vector3(0,1,-4));
+// cream edge strips
+for(const sx of [-1,1]){const strip=mesh(new THREE.BoxGeometry(.28,.07,7.2),mats.cream,false);strip.position.set(sx*4.65,-.01,9.5);scene.add(strip)}
+// fence realistic group left
+const fence=new THREE.Group();const fm=mats.metal.clone();for(let i=0;i<18;i++){const z=6.4-i*.36;const bar=mesh(new THREE.BoxGeometry(.12,2.75,.12),fm);bar.position.set(-5.75,1.37,z);fence.add(bar)}for(const z of [6.6,.05]){const post=mesh(new THREE.BoxGeometry(.34,3.35,.34),fm);post.position.set(-5.75,1.55,z);fence.add(post)}const toprail=mesh(new THREE.BoxGeometry(.16,.16,6.8),fm);toprail.position.set(-5.75,2.72,3.3);fence.add(toprail);register('fence','黑色金屬柵欄','柵欄',fence,'#ffae24',new THREE.Vector3(-.5,2.4,3));
+// beacons
+function beacon(color,x,z,h=3.45){const g=new THREE.Group();const pole=mesh(new THREE.CylinderGeometry(.13,.13,h,16),mats.metal);pole.position.y=h/2;g.add(pole);const base=mesh(new THREE.CylinderGeometry(.28,.28,.16,24),new THREE.MeshStandardMaterial({color:0xd7d2c0,roughness:.55}));base.position.y=h+.02;g.add(base);const glass=mesh(new THREE.CylinderGeometry(.26,.26,.45,24),new THREE.MeshStandardMaterial({color,transparent:true,opacity:.78,emissive:color,emissiveIntensity:.35,roughness:.2}));glass.position.y=h+.3;g.add(glass);g.position.set(x,0,z);return g}
+const bgrp=new THREE.Group();bgrp.add(beacon(0xff1f1f,-6.35,6.55,3.4));bgrp.add(beacon(0x166dff,-5.05,5.85,3.05));register('beacons','紅藍警示燈','設備',bgrp,'#31cbd8',new THREE.Vector3(0,4,6));
+// right stone boundary wall with posts
+const stone=new THREE.Group();const mainStone=mesh(new THREE.BoxGeometry(.65,3.3,20),mats.stone);mainStone.position.set(6.9,1.65,-3.7);stone.add(mainStone);for(let z=6;z>-14;z-=3.3){const p=mesh(new THREE.BoxGeometry(.95,3.8,.95),mats.stone);p.position.set(6.9,1.9,z);stone.add(p);const cap=mesh(new THREE.CylinderGeometry(.62,.7,.28,4),mats.stone);cap.rotation.y=Math.PI/4;cap.position.set(6.9,3.95,z);stone.add(cap)}register('stoneWall','右側石牆','牆面',stone,'#57a7ff',new THREE.Vector3(7.2,4,-3));
+// utility pipes + green panel
+const utility=new THREE.Group();const pipeMat=new THREE.MeshStandardMaterial({color:0xaeb6b7,roughness:.35,metalness:.65});for(const [x,z,h] of [[6.25,6.1,2.4],[6.45,5.7,1.8],[6.1,5.35,1.4]]){const p=mesh(new THREE.CylinderGeometry(.11,.11,h,16),pipeMat);p.position.set(x,h/2,z);utility.add(p)}const green=mesh(new THREE.BoxGeometry(.75,1.05,.18),new THREE.MeshStandardMaterial({color:0x1d8d49,emissive:0x0d3e20,emissiveIntensity:.35,roughness:.4}));green.position.set(6.3,3.35,5.65);utility.add(green);register('utility','設備區','設備',utility,'#32cad7',new THREE.Vector3(6.4,3.9,5.6));
+// buildings with balconies
+function building(x,z,w,h,d,mat){const g=new THREE.Group();const body=mesh(new THREE.BoxGeometry(w,h,d),mat);body.position.y=h/2;g.add(body);for(let y=2.3;y<h-1;y+=2.5){for(const sx of [-1,1]){const slab=mesh(new THREE.BoxGeometry(w*.38,.13,.9),mats.concrete);slab.position.set(sx*w*.28,y,d/2+.38);g.add(slab);const rail=mesh(new THREE.BoxGeometry(w*.38,.8,.06),mats.metal);rail.position.set(sx*w*.28,y+.38,d/2+.78);g.add(rail)}}g.position.set(x,0,z);return g}
+const bgBuild=new THREE.Group();bgBuild.add(building(-5.6,-22,7.6,17,5,facadeTex?new THREE.MeshStandardMaterial({map:facadeTex,roughness:.82}):mats.concrete));bgBuild.add(building(4.3,-25,6.5,14,5,new THREE.MeshStandardMaterial({map:facadeTex,roughness:.82,color:0x9aa0a7})));register('building','背景住宅建築','建築',bgBuild,'#57a7ff',new THREE.Vector3(-3,15,-22));
+// landscaping trees
+function tree(x,z,s=1){const g=new THREE.Group();const trunk=mesh(new THREE.CylinderGeometry(.16*s,.22*s,2.5*s,9),mats.trunk);trunk.position.y=1.25*s;g.add(trunk);const leafMat=mats.green.clone();for(let i=0;i<7;i++){const leaf=mesh(new THREE.IcosahedronGeometry((.75+Math.random()*.28)*s,2),leafMat);leaf.position.set((Math.random()-.5)*1.15*s,2.5*s+Math.random()*1.4*s,(Math.random()-.5)*1.15*s);leaf.scale.y=1.2;g.add(leaf)}g.position.set(x,0,z);return g}
+const landscape=new THREE.Group();for(const t of [[-8,-7,1.2],[-9,-12,1.5],[-7.5,-16,1.1],[7.8,-13,1.2],[9,-18,1.45],[-8,1,1]])landscape.add(tree(...t));register('landscape','植栽景觀','植栽',landscape,'#54d85b',new THREE.Vector3(-8,5,-8));
+// front road / site floor
+const site=mesh(new THREE.PlaneGeometry(60,70),new THREE.MeshStandardMaterial({color:0x77827d,roughness:1}));site.rotation.x=-Math.PI/2;site.position.set(0,-4.3,-12);site.receiveShadow=true;scene.add(site);
+
+// save original transforms
+for(const m of modules.values()){m.initial={p:m.obj.position.clone(),r:m.obj.rotation.clone(),s:m.obj.scale.clone(),v:m.obj.visible}}
+
+function editableMeshes(obj){const a=[];obj.traverse(o=>{if(o.isMesh)a.push(o)});return a}
+function selectModule(id){const m=modules.get(id);if(!m)return;selected=m;if(boxHelper){scene.remove(boxHelper);boxHelper.geometry.dispose();boxHelper.material.dispose()}boxHelper=new THREE.BoxHelper(m.obj,0xffae24);boxHelper.material.depthTest=false;boxHelper.renderOrder=999;scene.add(boxHelper);applyTool();renderLayers();renderProps();toast(m.name)}
+function updateBox(){if(boxHelper&&selected)boxHelper.setFromObject(selected.obj)}
+function applyTool(){transform.detach();if(!selected)return;if(currentTool==='move'||currentTool==='rotate'||currentTool==='scale'){transform.attach(selected.obj);transform.setMode(currentTool);transform.showX=true;transform.showY=currentTool!=='rotate';transform.showZ=true}}
+function markDirty(){document.getElementById('saveState').textContent='● 尚未儲存'}
+function sizeOf(obj){const b=new THREE.Box3().setFromObject(obj),s=new THREE.Vector3();b.getSize(s);return s}
+function renderLayers(){layersEl.innerHTML=[...modules.values()].map(m=>`<div class="layer ${selected&&m.id===selected.id?'active':''}" data-id="${m.id}"><span class="ldot" style="background:${m.color}"></span><div class="meta"><strong>${m.name}</strong><small>${m.type}</small></div><button class="eye" data-eye="${m.id}">${m.obj.visible?'顯示':'隱藏'}</button></div>`).join('')}
+function renderProps(){if(!selected){propsEl.innerHTML='<div class="help">點選場景中的模組開始編輯。</div>';return}const o=selected.obj,s=sizeOf(o);propsEl.innerHTML=`<h3><span class="ldot" style="background:${selected.color}"></span>${selected.name}<small>編號：${[...modules.keys()].indexOf(selected.id)+1}</small></h3><div class="grid">
+<div><label>材質</label><select id="material"><option>${selected.type==='柵欄'?'霧面金屬':selected.type==='斜坡'||selected.type==='地坪'?'灰色止滑鋪面':selected.type==='牆面'?'白色小磁磚':'高擬真材質'}</option></select></div><div><label>顏色調整</label><input id="color" type="color" value="#ffffff"></div>
+<div class="full"><label>左右位置 / 高度位置 / 前後位置</label><div class="row3"><input id="px" type="number" step="0.1" value="${o.position.x.toFixed(2)}"><input id="py" type="number" step="0.1" value="${o.position.y.toFixed(2)}"><input id="pz" type="number" step="0.1" value="${o.position.z.toFixed(2)}"></div></div>
+<div><label>高度</label><input value="${s.y.toFixed(2)} 公尺" disabled></div><div><label>長度</label><input value="${Math.max(s.x,s.z).toFixed(2)} 公尺" disabled></div>
+<div class="full"><label>水平旋轉 / 左右縮放 / 前後縮放</label><div class="row3"><input id="ry" type="number" step="1" value="${THREE.MathUtils.radToDeg(o.rotation.y).toFixed(1)}"><input id="sx" type="number" step="0.05" value="${o.scale.x.toFixed(2)}"><input id="sz" type="number" step="0.05" value="${o.scale.z.toFixed(2)}"></div></div></div>
+<div class="btnrow"><button class="btn" id="dup">複製模組</button><button class="btn danger" id="del">刪除模組</button><button class="btn primary" id="fit">聚焦檢視</button></div><div class="help"><b>真實三維模組：</b>移動、旋轉、縮放會直接操作模型。牆面、斜坡、柵欄、招牌、設備、建築與植栽都是獨立物件；照片對位只用來比對現場，不是場景模型本身。</div>`;
+const sync=()=>{o.position.set(+px.value||0,+py.value||0,+pz.value||0);o.rotation.y=THREE.MathUtils.degToRad(+ry.value||0);o.scale.x=Math.max(.05,+sx.value||1);o.scale.z=Math.max(.05,+sz.value||1);updateBox();markDirty()};for(const id of ['px','py','pz','ry','sx','sz'])document.getElementById(id).addEventListener('input',sync);
+document.getElementById('color').addEventListener('input',e=>{editableMeshes(o).forEach(x=>{if(Array.isArray(x.material))x.material.forEach(mm=>mm.color&&mm.color.set(e.target.value));else if(x.material&&x.material.color)x.material.color.set(e.target.value)});markDirty()});
+document.getElementById('fit').onclick=()=>focusObject(o);document.getElementById('dup').onclick=duplicateSelected;document.getElementById('del').onclick=deleteSelected}
+function focusObject(obj){const b=new THREE.Box3().setFromObject(obj),c=new THREE.Vector3(),s=new THREE.Vector3();b.getCenter(c);b.getSize(s);const d=Math.max(s.x,s.y,s.z)*2.4+4;controls.target.copy(c);camera.position.copy(c).add(new THREE.Vector3(d*.6,d*.45,d));controls.update()}
+function duplicateSelected(){if(!selected)return;const clone=selected.obj.clone(true);clone.position.x+=.8;clone.position.z+=.8;clone.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone()});const id=selected.id+'_copy_'+Date.now().toString().slice(-4);register(id,selected.name+' 複製',selected.type,clone,selected.color,selected.labelOffset.clone());selectModule(id);markDirty()}
+function deleteSelected(){if(!selected)return;const id=selected.id;if(['ramp','wallL','wallR'].includes(id)&&!confirm('這是主要建築模組，確定刪除？'))return;transform.detach();scene.remove(selected.obj);selected.label.remove();modules.delete(id);if(boxHelper){scene.remove(boxHelper);boxHelper=null}selected=null;renderLayers();renderProps();markDirty()}
+function saveScene(){const data={};for(const [id,m] of modules)data[id]={p:m.obj.position.toArray(),r:[m.obj.rotation.x,m.obj.rotation.y,m.obj.rotation.z],s:m.obj.scale.toArray(),v:m.obj.visible};localStorage.setItem('parkingPhotorealInteractiveV1',JSON.stringify(data));document.getElementById('saveState').textContent='● 已儲存';toast('場景已儲存')}
+function restoreScene(){try{const data=JSON.parse(localStorage.getItem('parkingPhotorealInteractiveV1')||'{}');for(const [id,d] of Object.entries(data)){const m=modules.get(id);if(!m)continue;m.obj.position.fromArray(d.p);m.obj.rotation.set(...d.r);m.obj.scale.fromArray(d.s);m.obj.visible=d.v!==false}}catch(e){}}
+function resetScene(){localStorage.removeItem('parkingPhotorealInteractiveV1');for(const m of modules.values()){m.obj.position.copy(m.initial.p);m.obj.rotation.copy(m.initial.r);m.obj.scale.copy(m.initial.s);m.obj.visible=m.initial.v}homeView();renderLayers();renderProps();updateBox();toast('已恢復預設場景')}
+function homeView(){camera.position.copy(defaultCam.p);controls.target.copy(defaultCam.t);controls.update()}
+function topView(){camera.position.set(0,31,-3);controls.target.set(0,-1,-4);controls.update()}
+
+const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();let down=null;
+renderer.domElement.addEventListener('pointerdown',e=>down={x:e.clientX,y:e.clientY});renderer.domElement.addEventListener('pointerup',e=>{if(currentTool!=='select'&&currentTool!=='measure')return;if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>6)return;const r=renderer.domElement.getBoundingClientRect();mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects([...modules.values()].map(m=>m.obj),true);if(hits.length){let obj=hits[0].object,id=obj.userData.moduleId;if(id){selectModule(id);if(currentTool==='measure'){const s=sizeOf(modules.get(id).obj);toast(`${modules.get(id).name}：${s.x.toFixed(2)} × ${s.y.toFixed(2)} × ${s.z.toFixed(2)} 公尺`)}}}});
+
+layersEl.addEventListener('click',e=>{const eye=e.target.closest('[data-eye]');if(eye){const m=modules.get(eye.dataset.eye);m.obj.visible=!m.obj.visible;m.label.style.display=m.obj.visible?'':'none';renderLayers();markDirty();return}const row=e.target.closest('[data-id]');if(row)selectModule(row.dataset.id)});
+document.getElementById('bottomTools').addEventListener('click',e=>{const b=e.target.closest('.tool');if(!b)return;const t=b.dataset.tool;if(t==='more'){const c=prompt('更多功能\n1 = 儲存場景\n2 = 恢復預設\n3 = 照片對位\n請輸入 1 / 2 / 3');if(c==='1')saveScene();if(c==='2'&&confirm('恢復預設場景？'))resetScene();if(c==='3')cyclePhoto();return}currentTool=t;document.querySelectorAll('.tool').forEach(x=>x.classList.toggle('active',x===b));applyTool();toast({select:'選取：點選模組',move:'移動：拖曳模組',rotate:'旋轉：調整模組角度',scale:'縮放：調整模組大小',measure:'量測：點選模組查看尺寸'}[t]||t)});
+function cyclePhoto(){photoMode=(photoMode+1)%4;const vals=[0,.25,.5,.78];photoMatch.style.opacity=vals[photoMode];photoMatch.classList.toggle('on',photoMode>0);toast(`照片對位 ${Math.round(vals[photoMode]*100)}%`)}
+document.getElementById('photoBtn').onclick=cyclePhoto;document.getElementById('homeBtn').onclick=homeView;document.getElementById('topBtn').onclick=topView;document.getElementById('labelsBtn').onclick=()=>{labelsOn=!labelsOn;labelsHost.style.display=labelsOn?'':'none'};document.getElementById('fullBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();document.getElementById('shareBtn').onclick=()=>navigator.share?.({title:document.title,url:location.href}).catch(()=>{});document.getElementById('menuBtn').onclick=()=>saveScene();
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));const body=document.getElementById('panelBody'),tab=b.dataset.tab;if(tab==='both'){body.style.gridTemplateColumns=innerWidth<760?'1fr':'.75fr 1.25fr';layersEl.style.display='block';propsEl.style.display='block'}else if(tab==='layers'){body.style.gridTemplateColumns='1fr';layersEl.style.display='block';propsEl.style.display='none'}else{body.style.gridTemplateColumns='1fr';layersEl.style.display='none';propsEl.style.display='block'}});
+
+function updateLabels(){for(const m of modules.values()){if(!m.obj.visible||!labelsOn){m.label.style.display='none';continue}m.label.style.display='flex';const p=new THREE.Vector3();new THREE.Box3().setFromObject(m.obj).getCenter(p);p.add(m.labelOffset);p.project(camera);const x=(p.x*.5+.5)*stage.clientWidth,y=(-p.y*.5+.5)*stage.clientHeight;m.label.style.left=x+'px';m.label.style.top=y+'px';m.label.style.opacity=(p.z>-1&&p.z<1)?'1':'0'}}
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(stage);resize();restoreScene();renderLayers();renderProps();selectModule('fence');stage.classList.add('engine-ready');engineBadge.textContent='真實三維 · 網頁圖形引擎';
+function loop(){requestAnimationFrame(loop);controls.update();if(boxHelper&&selected)boxHelper.update();updateLabels();renderer.render(scene,camera)}loop();
+</script>
+<script>
+setTimeout(()=>{if(!document.getElementById('stage').classList.contains('engine-ready')){document.getElementById('engineBadge').textContent='高擬真預覽';document.getElementById('errorBox').classList.add('show')}},4500);
+</script>
+</body>
+</html>
