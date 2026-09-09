@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
-<title>停車場入口三維編輯器－高擬真互動版 V1.0.4</title>
+<title>停車場入口三維編輯器－高擬真互動版 V1.0.6</title>
 <style>
 :root{--ink:#1d2633;--muted:#738196;--line:#dfe6ef;--card:#fff;--blue:#1677ff;--orange:#ffae24;--bg:#eef3f8;--shadow:0 14px 35px rgba(20,35,55,.15)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",Arial,sans-serif;color:var(--ink)}
@@ -24,14 +24,14 @@ button,input,select{font:inherit}.app{width:100%;max-width:none;margin:0;min-hei
   <div class="url"><span>🔒</span><b>停車場三維編輯器</b><span>↻</span><span>⋮</span></div>
   <div class="topbar">
     <div class="brand"><div class="cube"></div><div><strong>三維空間</strong><small>設計 · 建模 · 視覺化</small></div></div>
-    <div class="top-actions"><span class="version">V1.0.4</span><span class="saved" id="saveState">● 已儲存</span><button id="photoBtn">照片對位</button><button class="desktop" id="shareBtn">分享</button><button id="menuBtn">☰</button></div>
+    <div class="top-actions"><span class="version">V1.0.6</span><span class="saved" id="saveState">● 已儲存</span><button id="photoBtn">照片對位</button><button class="desktop" id="shareBtn">分享</button><button id="menuBtn">☰</button></div>
   </div>
 
   <div class="stagewrap"><div class="stagecard"><div class="stage" id="stage">
     <img class="fallback" src="assets/photoreal_target_view.png" alt="高擬真參考畫面"/>
     <div id="webgl"></div>
     <img id="photoMatch" class="photoMatch" src="assets/photoreal_target_view.png" alt="照片對位參考"/>
-    <div class="scene-title"><b>停車場斜坡入口</b><small>三維編輯器 · 高擬真互動場景 · V1.0.4</small></div>
+    <div class="scene-title"><b>停車場斜坡入口</b><small>三維編輯器 · 高擬真互動場景 · V1.0.6</small></div>
     <div class="engineBadge" id="engineBadge">三維場景載入中…</div>
     <div class="rightTools">
       <button class="rbtn" id="homeBtn">主視角</button>
@@ -71,7 +71,7 @@ import { TransformControls } from 'three/addons/controls/TransformControls.js';
 const stage=document.getElementById('stage'), host=document.getElementById('webgl'), labelsHost=document.getElementById('labels');
 const layersEl=document.getElementById('layers'), propsEl=document.getElementById('props'), toastEl=document.getElementById('toast');
 const engineBadge=document.getElementById('engineBadge'), photoMatch=document.getElementById('photoMatch');
-const APP_VERSION='V1.0.4';
+const APP_VERSION='V1.0.5';
 const modules=new Map(); let selected=null, boxHelper=null, labelsOn=false, photoMode=0, currentTool='select';
 labelsHost.style.display='none';
 document.getElementById('labelsBtn').textContent='標籤：關';
@@ -88,7 +88,7 @@ const ledTex=canvasTex(256,768,(c,w,h)=>{
   c.fillStyle='#050708';c.fillRect(0,0,w,h);
   // 暗紅點陣背景
   c.fillStyle='rgba(255,35,20,.16)';for(let y=8;y<h;y+=12){for(let x=8;x<w;x+=12){c.beginPath();c.arc(x,y,1.5,0,Math.PI*2);c.fill()}}
-  const chars=[...'昱拓弱電有限公司'];
+  const chars=[...'樺龍潮+社區車道入口'];
   c.textAlign='center';c.textBaseline='middle';c.font='bold 58px "Noto Sans TC", "Microsoft JhengHei", sans-serif';
   c.shadowColor='#ff2a14';c.shadowBlur=14;c.fillStyle='#ff2b18';
   const top=60, step=(h-120)/(chars.length-1);chars.forEach((ch,i)=>c.fillText(ch,w/2,top+i*step));
@@ -130,7 +130,7 @@ const wallLights=new THREE.Group();for(let i=0;i<6;i++){const z=3-i*3.2;const y=
 // cream edge strips
 for(const sx of [-1,1]){const strip=mesh(new THREE.BoxGeometry(.28,.07,7.2),mats.cream,false);strip.position.set(sx*4.65,-.01,9.5);scene.add(strip)}
 // fence realistic group left
-const fence=new THREE.Group();const fm=mats.metal.clone();for(let i=0;i<18;i++){const z=6.4-i*.36;const bar=mesh(new THREE.BoxGeometry(.12,2.75,.12),fm);bar.position.set(-5.75,1.37,z);fence.add(bar)}for(const z of [6.6,.05]){const post=mesh(new THREE.BoxGeometry(.34,3.35,.34),fm);post.position.set(-5.75,1.55,z);fence.add(post)}const toprail=mesh(new THREE.BoxGeometry(.16,.16,6.8),fm);toprail.position.set(-5.75,2.72,3.3);fence.add(toprail);register('fence','黑色金屬柵欄','柵欄',fence,'#ffae24',new THREE.Vector3(-.5,2.4,3));
+const fence=new THREE.Group();const fm=mats.metal.clone();for(let i=0;i<18;i++){const z=6.4-i*.36;const bar=mesh(new THREE.BoxGeometry(.12,2.75,.12),fm);bar.position.set(-5.75,1.37,z);fence.add(bar)}for(const z of [6.6,.05]){const post=mesh(new THREE.BoxGeometry(.34,3.35,.34),fm);post.position.set(-5.75,1.55,z);fence.add(post)}const toprail=mesh(new THREE.BoxGeometry(.16,.16,6.8),fm);toprail.position.set(-5.75,2.72,3.3);fence.add(toprail);fence.position.set(-0.55,0,0.85);fence.rotation.y=-0.04;register('fence','黑色金屬柵欄','柵欄',fence,'#ffae24',new THREE.Vector3(-1.0,2.4,3.6));
 // beacons
 function beacon(color,x,z,h=3.45){const g=new THREE.Group();const pole=mesh(new THREE.CylinderGeometry(.13,.13,h,16),mats.metal);pole.position.y=h/2;g.add(pole);const base=mesh(new THREE.CylinderGeometry(.28,.28,.16,24),new THREE.MeshStandardMaterial({color:0xd7d2c0,roughness:.55}));base.position.y=h+.02;g.add(base);const glass=mesh(new THREE.CylinderGeometry(.26,.26,.45,24),new THREE.MeshStandardMaterial({color,transparent:true,opacity:.78,emissive:color,emissiveIntensity:.35,roughness:.2}));glass.position.y=h+.3;g.add(glass);g.position.set(x,0,z);return g}
 const bgrp=new THREE.Group();bgrp.add(beacon(0xff1f1f,-6.35,6.55,3.4));bgrp.add(beacon(0x166dff,-5.05,5.85,3.05));register('beacons','紅藍警示燈','設備',bgrp,'#31cbd8',new THREE.Vector3(0,4,6));
@@ -149,10 +149,10 @@ const ledFaceMat=new THREE.MeshStandardMaterial({map:ledTex,emissive:0xff1608,em
 const ledFace=mesh(new THREE.PlaneGeometry(.275*ledScale,.87*ledScale),ledFaceMat,false);ledFace.position.set(0,ledH/2,ledD/2+.008);ledSign.add(ledFace);
 const ledTop=mesh(new THREE.BoxGeometry(.34*ledScale,.035*ledScale,.17*ledScale),mats.dark);ledTop.position.set(0,ledH+.07,.0);ledSign.add(ledTop);
 const ledBottom=mesh(new THREE.BoxGeometry(.34*ledScale,.035*ledScale,.17*ledScale),mats.dark);ledBottom.position.set(0,.07,.0);ledSign.add(ledBottom);
-// 放在場景右側、豎立，正面朝向主視角；大小依使用者提供的效果圖調整
-ledSign.position.set(5.55,rampY(5.1),5.1);
-ledSign.rotation.y=-0.04;
-register('ledSign','字幕機','字幕機',ledSign,'#a55cff',new THREE.Vector3(.15,4.35,0));
+// 放在場景右側靠近石牆與設備柱，豎立，正面朝向主視角；位置依使用者最新示意圖微調
+ledSign.position.set(6.15,0.0,4.2);
+ledSign.rotation.y=-0.02;
+register('ledSign','字幕機','字幕機',ledSign,'#a55cff',new THREE.Vector3(.35,4.35,0.2));
 
 // buildings with balconies
 function building(x,z,w,h,d,mat){const g=new THREE.Group();const body=mesh(new THREE.BoxGeometry(w,h,d),mat);body.position.y=h/2;g.add(body);for(let y=2.3;y<h-1;y+=2.5){for(const sx of [-1,1]){const slab=mesh(new THREE.BoxGeometry(w*.38,.13,.9),mats.concrete);slab.position.set(sx*w*.28,y,d/2+.38);g.add(slab);const rail=mesh(new THREE.BoxGeometry(w*.38,.8,.06),mats.metal);rail.position.set(sx*w*.28,y+.38,d/2+.78);g.add(rail)}}g.position.set(x,0,z);return g}
@@ -169,33 +169,74 @@ for(const m of modules.values()){m.initial={p:m.obj.position.clone(),r:m.obj.rot
 function editableMeshes(obj){const a=[];obj.traverse(o=>{if(o.isMesh)a.push(o)});return a}
 function selectModule(id){const m=modules.get(id);if(!m)return;selected=m;if(boxHelper){scene.remove(boxHelper);boxHelper.geometry.dispose();boxHelper.material.dispose()}boxHelper=new THREE.BoxHelper(m.obj,0xffae24);boxHelper.material.depthTest=false;boxHelper.renderOrder=999;scene.add(boxHelper);applyTool();renderLayers();renderProps();toast(m.name)}
 function updateBox(){if(boxHelper&&selected)boxHelper.setFromObject(selected.obj)}
-function applyTool(){transform.detach();if(!selected)return;if(currentTool==='move'||currentTool==='rotate'||currentTool==='scale'){transform.attach(selected.obj);transform.setMode(currentTool);transform.showX=true;transform.showY=currentTool!=='rotate';transform.showZ=true}}
+function applyTool(){transform.detach();if(!selected)return;if(currentTool==='rotate'||currentTool==='scale'){transform.attach(selected.obj);transform.setMode(currentTool);transform.showX=true;transform.showY=currentTool!=='rotate';transform.showZ=true}/* 移動模式改為直接拖曳模組本體，滑鼠到哪模組就跟到哪 */}
 function markDirty(){document.getElementById('saveState').textContent='● 尚未儲存'}
 function sizeOf(obj){const b=new THREE.Box3().setFromObject(obj),s=new THREE.Vector3();b.getSize(s);return s}
 function renderLayers(){layersEl.innerHTML=[...modules.values()].map(m=>`<div class="layer ${selected&&m.id===selected.id?'active':''}" data-id="${m.id}"><span class="ldot" style="background:${m.color}"></span><div class="meta"><strong>${m.name}</strong><small>${m.type}</small></div><button class="eye" data-eye="${m.id}">${m.obj.visible?'顯示':'隱藏'}</button></div>`).join('')}
 function renderProps(){if(!selected){propsEl.innerHTML='<div class="help">點選場景中的模組開始編輯。</div>';return}const o=selected.obj,s=sizeOf(o);propsEl.innerHTML=`<h3><span class="ldot" style="background:${selected.color}"></span>${selected.name}<small>編號：${[...modules.keys()].indexOf(selected.id)+1}</small></h3><div class="grid">
 <div><label>材質</label><select id="material"><option>${selected.type==='字幕機'?'LED字幕機（霧面金屬）':selected.type==='柵欄'?'霧面金屬':selected.type==='斜坡'||selected.type==='地坪'?'灰色止滑鋪面':selected.type==='牆面'?'白色小磁磚':'高擬真材質'}</option></select></div><div><label>顏色調整</label><input id="color" type="color" value="#ffffff"></div>
 <div class="full"><label>左右位置 / 高度位置 / 前後位置</label><div class="row3"><input id="px" type="number" step="0.1" value="${o.position.x.toFixed(2)}"><input id="py" type="number" step="0.1" value="${o.position.y.toFixed(2)}"><input id="pz" type="number" step="0.1" value="${o.position.z.toFixed(2)}"></div></div>
-<div><label>寬度</label><input value="${s.x.toFixed(2)} 公尺" disabled></div><div><label>高度</label><input value="${s.y.toFixed(2)} 公尺" disabled></div><div><label>深度</label><input value="${s.z.toFixed(2)} 公尺" disabled></div><div><label>最大尺寸</label><input value="${Math.max(s.x,s.y,s.z).toFixed(2)} 公尺" disabled></div>${selected.id==='ledSign'?`<div class="full"><label>字幕機原始規格 / 場景顯示倍率</label><input value="32 × 96 × 15 公分 / 4 倍" disabled></div>`:''}
+<div><label>寬度</label><input value="${s.x.toFixed(2)} 公尺" disabled></div><div><label>高度</label><input value="${s.y.toFixed(2)} 公尺" disabled></div><div><label>深度</label><input value="${s.z.toFixed(2)} 公尺" disabled></div><div><label>最大尺寸</label><input value="${Math.max(s.x,s.y,s.z).toFixed(2)} 公尺" disabled></div>${selected.id==='ledSign'?`<div class="full"><label>字幕內容</label><input value="樺龍潮+ 社區 車道入口" disabled></div><div class="full"><label>字幕機原始規格 / 場景顯示倍率</label><input value="32 × 96 × 15 公分 / 4 倍" disabled></div>`:''}
 <div class="full"><label>水平旋轉 / 左右縮放 / 前後縮放</label><div class="row3"><input id="ry" type="number" step="1" value="${THREE.MathUtils.radToDeg(o.rotation.y).toFixed(1)}"><input id="sx" type="number" step="0.05" value="${o.scale.x.toFixed(2)}"><input id="sz" type="number" step="0.05" value="${o.scale.z.toFixed(2)}"></div></div></div>
-<div class="btnrow"><button class="btn" id="dup">複製模組</button><button class="btn danger" id="del">刪除模組</button><button class="btn primary" id="fit">聚焦檢視</button></div><div class="help"><b>真實三維模組：</b>移動、旋轉、縮放會直接操作模型。牆面、斜坡、柵欄、招牌、設備、建築與植栽都是獨立物件；照片對位只用來比對現場，不是場景模型本身。模組標籤預設關閉；三維視窗、圖層與屬性會依瀏覽器寬度自動放大至可用空間。</div>`;
+<div class="btnrow"><button class="btn" id="dup">複製模組</button><button class="btn danger" id="del">刪除模組</button><button class="btn primary" id="fit">聚焦檢視</button></div><div class="help"><b>真實三維模組：</b>移動模式可直接按住模組本體隨滑鼠拖曳；旋轉、縮放則使用三維控制軸操作。牆面、斜坡、柵欄、招牌、設備、建築與植栽都是獨立物件；照片對位只用來比對現場，不是場景模型本身。模組標籤預設關閉；三維視窗、圖層與屬性會依瀏覽器寬度自動放大至可用空間。</div>`;
 const sync=()=>{o.position.set(+px.value||0,+py.value||0,+pz.value||0);o.rotation.y=THREE.MathUtils.degToRad(+ry.value||0);o.scale.x=Math.max(.05,+sx.value||1);o.scale.z=Math.max(.05,+sz.value||1);updateBox();markDirty()};for(const id of ['px','py','pz','ry','sx','sz'])document.getElementById(id).addEventListener('input',sync);
 document.getElementById('color').addEventListener('input',e=>{editableMeshes(o).forEach(x=>{if(Array.isArray(x.material))x.material.forEach(mm=>mm.color&&mm.color.set(e.target.value));else if(x.material&&x.material.color)x.material.color.set(e.target.value)});markDirty()});
 document.getElementById('fit').onclick=()=>focusObject(o);document.getElementById('dup').onclick=duplicateSelected;document.getElementById('del').onclick=deleteSelected}
 function focusObject(obj){const b=new THREE.Box3().setFromObject(obj),c=new THREE.Vector3(),s=new THREE.Vector3();b.getCenter(c);b.getSize(s);const d=Math.max(s.x,s.y,s.z)*2.4+4;controls.target.copy(c);camera.position.copy(c).add(new THREE.Vector3(d*.6,d*.45,d));controls.update()}
 function duplicateSelected(){if(!selected)return;const clone=selected.obj.clone(true);clone.position.x+=.8;clone.position.z+=.8;clone.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone()});const id=selected.id+'_copy_'+Date.now().toString().slice(-4);register(id,selected.name+' 複製',selected.type,clone,selected.color,selected.labelOffset.clone());selectModule(id);markDirty()}
 function deleteSelected(){if(!selected)return;const id=selected.id;if(['ramp','wallL','wallR'].includes(id)&&!confirm('這是主要建築模組，確定刪除？'))return;transform.detach();scene.remove(selected.obj);selected.label.remove();modules.delete(id);if(boxHelper){scene.remove(boxHelper);boxHelper=null}selected=null;renderLayers();renderProps();markDirty()}
-function saveScene(){const data={};for(const [id,m] of modules)data[id]={p:m.obj.position.toArray(),r:[m.obj.rotation.x,m.obj.rotation.y,m.obj.rotation.z],s:m.obj.scale.toArray(),v:m.obj.visible};localStorage.setItem('parkingPhotorealInteractiveV104',JSON.stringify(data));document.getElementById('saveState').textContent='● 已儲存';toast('場景已儲存')}
-function restoreScene(){try{const data=JSON.parse(localStorage.getItem('parkingPhotorealInteractiveV104')||'{}');for(const [id,d] of Object.entries(data)){const m=modules.get(id);if(!m)continue;m.obj.position.fromArray(d.p);m.obj.rotation.set(...d.r);m.obj.scale.fromArray(d.s);m.obj.visible=d.v!==false}}catch(e){}}
-function resetScene(){localStorage.removeItem('parkingPhotorealInteractiveV104');for(const m of modules.values()){m.obj.position.copy(m.initial.p);m.obj.rotation.copy(m.initial.r);m.obj.scale.copy(m.initial.s);m.obj.visible=m.initial.v}homeView();renderLayers();renderProps();updateBox();toast('已恢復預設場景')}
+function saveScene(){const data={};for(const [id,m] of modules)data[id]={p:m.obj.position.toArray(),r:[m.obj.rotation.x,m.obj.rotation.y,m.obj.rotation.z],s:m.obj.scale.toArray(),v:m.obj.visible};localStorage.setItem('parkingPhotorealInteractiveV106',JSON.stringify(data));document.getElementById('saveState').textContent='● 已儲存';toast('場景已儲存')}
+function restoreScene(){try{const data=JSON.parse(localStorage.getItem('parkingPhotorealInteractiveV106')||'{}');for(const [id,d] of Object.entries(data)){const m=modules.get(id);if(!m)continue;m.obj.position.fromArray(d.p);m.obj.rotation.set(...d.r);m.obj.scale.fromArray(d.s);m.obj.visible=d.v!==false}}catch(e){}}
+function resetScene(){localStorage.removeItem('parkingPhotorealInteractiveV106');for(const m of modules.values()){m.obj.position.copy(m.initial.p);m.obj.rotation.copy(m.initial.r);m.obj.scale.copy(m.initial.s);m.obj.visible=m.initial.v}homeView();renderLayers();renderProps();updateBox();toast('已恢復預設場景')}
 function homeView(){camera.position.copy(defaultCam.p);controls.target.copy(defaultCam.t);controls.update()}
 function topView(){camera.position.set(0,31,-3);controls.target.set(0,-1,-4);controls.update()}
 
-const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();let down=null;
-renderer.domElement.addEventListener('pointerdown',e=>down={x:e.clientX,y:e.clientY});renderer.domElement.addEventListener('pointerup',e=>{if(currentTool!=='select'&&currentTool!=='measure')return;if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>6)return;const r=renderer.domElement.getBoundingClientRect();mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects([...modules.values()].map(m=>m.obj),true);if(hits.length){let obj=hits[0].object,id=obj.userData.moduleId;if(id){selectModule(id);if(currentTool==='measure'){const s=sizeOf(modules.get(id).obj);toast(`${modules.get(id).name}：${s.x.toFixed(2)} × ${s.y.toFixed(2)} × ${s.z.toFixed(2)} 公尺`)}}}});
+const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();let down=null,moveDrag=null;
+function setMouseFromEvent(e){const r=renderer.domElement.getBoundingClientRect();mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(mouse,camera)}
+function moduleHitFromEvent(e){setMouseFromEvent(e);const hits=raycaster.intersectObjects([...modules.values()].filter(m=>m.obj.visible).map(m=>m.obj),true);if(!hits.length)return null;let obj=hits[0].object;const id=obj.userData.moduleId;return id&&modules.has(id)?modules.get(id):null}
+renderer.domElement.addEventListener('pointerdown',e=>{
+  down={x:e.clientX,y:e.clientY};
+  if(currentTool!=='move')return;
+  const hit=moduleHitFromEvent(e);if(!hit)return;
+  if(!selected||selected.id!==hit.id)selectModule(hit.id);
+  // 以與螢幕平行、穿過模組中心的平面作為拖曳面，讓物件自然跟著游標移動
+  const normal=new THREE.Vector3();camera.getWorldDirection(normal).normalize();
+  const center=new THREE.Vector3();new THREE.Box3().setFromObject(hit.obj).getCenter(center);
+  const plane=new THREE.Plane().setFromNormalAndCoplanarPoint(normal,center);
+  const hitPoint=new THREE.Vector3();setMouseFromEvent(e);if(!raycaster.ray.intersectPlane(plane,hitPoint))return;
+  const worldPos=new THREE.Vector3();hit.obj.getWorldPosition(worldPos);
+  moveDrag={id:hit.id,plane,offset:worldPos.clone().sub(hitPoint),pointerId:e.pointerId};
+  controls.enabled=false;transform.detach();
+  try{renderer.domElement.setPointerCapture(e.pointerId)}catch(_){ }
+  renderer.domElement.style.cursor='grabbing';
+  e.preventDefault();
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+  if(!moveDrag||currentTool!=='move'||e.pointerId!==moveDrag.pointerId)return;
+  const m=modules.get(moveDrag.id);if(!m)return;
+  setMouseFromEvent(e);const p=new THREE.Vector3();if(!raycaster.ray.intersectPlane(moveDrag.plane,p))return;
+  p.add(moveDrag.offset);
+  if(m.obj.parent&&m.obj.parent!==scene)m.obj.parent.worldToLocal(p);
+  m.obj.position.copy(p);
+  updateBox();syncMoveInputs(m.obj);markDirty();
+  e.preventDefault();
+});
+function endMoveDrag(e){
+  if(!moveDrag)return;
+  if(e&&moveDrag.pointerId!==undefined&&e.pointerId!==moveDrag.pointerId)return;
+  moveDrag=null;controls.enabled=true;renderer.domElement.style.cursor='default';renderProps();
+}
+renderer.domElement.addEventListener('pointerup',e=>{
+  if(moveDrag){endMoveDrag(e);return;}
+  if(currentTool!=='select'&&currentTool!=='measure')return;
+  if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>6)return;
+  const hit=moduleHitFromEvent(e);if(hit){selectModule(hit.id);if(currentTool==='measure'){const s=sizeOf(hit.obj);toast(`${hit.name}：${s.x.toFixed(2)} × ${s.y.toFixed(2)} × ${s.z.toFixed(2)} 公尺`)}}
+});
+renderer.domElement.addEventListener('pointercancel',endMoveDrag);
+function syncMoveInputs(o){const a=document.getElementById('px'),b=document.getElementById('py'),c=document.getElementById('pz');if(a)a.value=o.position.x.toFixed(2);if(b)b.value=o.position.y.toFixed(2);if(c)c.value=o.position.z.toFixed(2)}
 
 layersEl.addEventListener('click',e=>{const eye=e.target.closest('[data-eye]');if(eye){const m=modules.get(eye.dataset.eye);m.obj.visible=!m.obj.visible;m.label.style.display=(m.obj.visible&&labelsOn)?'flex':'none';renderLayers();markDirty();return}const row=e.target.closest('[data-id]');if(row)selectModule(row.dataset.id)});
-document.getElementById('bottomTools').addEventListener('click',e=>{const b=e.target.closest('.tool');if(!b)return;const t=b.dataset.tool;if(t==='more'){const c=prompt('更多功能\n1 = 儲存場景\n2 = 恢復預設\n3 = 照片對位\n請輸入 1 / 2 / 3');if(c==='1')saveScene();if(c==='2'&&confirm('恢復預設場景？'))resetScene();if(c==='3')cyclePhoto();return}currentTool=t;document.querySelectorAll('.tool').forEach(x=>x.classList.toggle('active',x===b));applyTool();toast({select:'選取：點選模組',move:'移動：拖曳模組',rotate:'旋轉：調整模組角度',scale:'縮放：調整模組大小',measure:'量測：點選模組查看尺寸'}[t]||t)});
+document.getElementById('bottomTools').addEventListener('click',e=>{const b=e.target.closest('.tool');if(!b)return;const t=b.dataset.tool;if(t==='more'){const c=prompt('更多功能\n1 = 儲存場景\n2 = 恢復預設\n3 = 照片對位\n請輸入 1 / 2 / 3');if(c==='1')saveScene();if(c==='2'&&confirm('恢復預設場景？'))resetScene();if(c==='3')cyclePhoto();return}currentTool=t;document.querySelectorAll('.tool').forEach(x=>x.classList.toggle('active',x===b));applyTool();toast({select:'選取：點選模組',move:'移動：直接按住模組本體拖曳，會跟著滑鼠移動',rotate:'旋轉：調整模組角度',scale:'縮放：調整模組大小',measure:'量測：點選模組查看尺寸'}[t]||t)});
 function cyclePhoto(){photoMode=(photoMode+1)%4;const vals=[0,.25,.5,.78];photoMatch.style.opacity=vals[photoMode];photoMatch.classList.toggle('on',photoMode>0);toast(`照片對位 ${Math.round(vals[photoMode]*100)}%`)}
 document.getElementById('photoBtn').onclick=cyclePhoto;document.getElementById('homeBtn').onclick=homeView;document.getElementById('topBtn').onclick=topView;document.getElementById('labelsBtn').onclick=()=>{labelsOn=!labelsOn;labelsHost.style.display=labelsOn?'block':'none';document.getElementById('labelsBtn').textContent=labelsOn?'標籤：開':'標籤：關';toast(labelsOn?'已開啟模組標籤':'已關閉模組標籤')};document.getElementById('fullBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();document.getElementById('shareBtn').onclick=()=>navigator.share?.({title:document.title,url:location.href}).catch(()=>{});document.getElementById('menuBtn').onclick=()=>saveScene();
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));const body=document.getElementById('panelBody'),tab=b.dataset.tab;if(tab==='both'){body.style.gridTemplateColumns=innerWidth<760?'1fr':'.75fr 1.25fr';layersEl.style.display='block';propsEl.style.display='block'}else if(tab==='layers'){body.style.gridTemplateColumns='1fr';layersEl.style.display='block';propsEl.style.display='none'}else{body.style.gridTemplateColumns='1fr';layersEl.style.display='none';propsEl.style.display='block'}});
