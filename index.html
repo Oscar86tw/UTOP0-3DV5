@@ -81,6 +81,16 @@ const stoneTex=canvasTex(512,512,(c,w,h)=>{c.fillStyle='#8e918c';c.fillRect(0,0,
 const concreteTex=canvasTex(256,256,(c,w,h)=>{c.fillStyle='#a9adb0';c.fillRect(0,0,w,h);for(let i=0;i<1800;i++){const g=140+Math.random()*50|0;c.fillStyle=`rgba(${g},${g},${g},.18)`;c.fillRect(Math.random()*w,Math.random()*h,1,1)}});
 const facadeTex=canvasTex(512,512,(c,w,h)=>{c.fillStyle='#8e969f';c.fillRect(0,0,w,h);for(let y=30;y<h;y+=92){for(let x=28;x<w;x+=88){c.fillStyle='#273746';c.fillRect(x,y,48,58);c.fillStyle='#a8b0b6';c.fillRect(x+52,y,10,58)}c.fillStyle='#747d86';c.fillRect(0,y+65,w,10)}});
 const signTex=canvasTex(1024,256,(c,w,h)=>{c.fillStyle='#2d3540';c.fillRect(0,0,w,h);c.fillStyle='#fff';c.font='44px Arial';c.fillText('←  停車場',75,96);c.font='26px sans-serif';c.fillText('停車場出入口',165,145);c.strokeStyle='#d43838';c.lineWidth=8;c.beginPath();c.arc(710,105,38,0,Math.PI*2);c.stroke();c.beginPath();c.arc(835,105,38,0,Math.PI*2);c.stroke();c.fillStyle='#fff';c.font='bold 34px Arial';c.fillText('15',688,117);c.font='bold 28px Arial';c.fillText('2.1m',805,116)});
+const ledTex=canvasTex(256,768,(c,w,h)=>{
+  c.fillStyle='#050708';c.fillRect(0,0,w,h);
+  // 暗紅點陣背景
+  c.fillStyle='rgba(255,35,20,.16)';for(let y=8;y<h;y+=12){for(let x=8;x<w;x+=12){c.beginPath();c.arc(x,y,1.5,0,Math.PI*2);c.fill()}}
+  const chars=[...'昱拓弱電有限公司'];
+  c.textAlign='center';c.textBaseline='middle';c.font='bold 58px "Noto Sans TC", "Microsoft JhengHei", sans-serif';
+  c.shadowColor='#ff2a14';c.shadowBlur=14;c.fillStyle='#ff2b18';
+  const top=60, step=(h-120)/(chars.length-1);chars.forEach((ch,i)=>c.fillText(ch,w/2,top+i*step));
+});
+
 
 tileTex.repeat.set(4,7);paverTex.repeat.set(5,10);stoneTex.repeat.set(2,6);concreteTex.repeat.set(3,3);facadeTex.repeat.set(2,3);
 const mats={tile:new THREE.MeshStandardMaterial({map:tileTex,roughness:.88,metalness:0}),paver:new THREE.MeshStandardMaterial({map:paverTex,roughness:.9}),stone:new THREE.MeshStandardMaterial({map:stoneTex,roughness:.95}),concrete:new THREE.MeshStandardMaterial({map:concreteTex,roughness:.9}),metal:new THREE.MeshStandardMaterial({color:0x2f3a46,roughness:.35,metalness:.75}),dark:new THREE.MeshStandardMaterial({color:0x29323d,roughness:.52,metalness:.3}),green:new THREE.MeshStandardMaterial({color:0x4d7f4e,roughness:.95}),trunk:new THREE.MeshStandardMaterial({color:0x6d4e32,roughness:1}),sign:new THREE.MeshStandardMaterial({map:signTex,roughness:.48,metalness:.2}),cream:new THREE.MeshStandardMaterial({color:0xd7c692,roughness:.9})};
@@ -125,6 +135,17 @@ const bgrp=new THREE.Group();bgrp.add(beacon(0xff1f1f,-6.35,6.55,3.4));bgrp.add(
 const stone=new THREE.Group();const mainStone=mesh(new THREE.BoxGeometry(.65,3.3,20),mats.stone);mainStone.position.set(6.9,1.65,-3.7);stone.add(mainStone);for(let z=6;z>-14;z-=3.3){const p=mesh(new THREE.BoxGeometry(.95,3.8,.95),mats.stone);p.position.set(6.9,1.9,z);stone.add(p);const cap=mesh(new THREE.CylinderGeometry(.62,.7,.28,4),mats.stone);cap.rotation.y=Math.PI/4;cap.position.set(6.9,3.95,z);stone.add(cap)}register('stoneWall','右側石牆','牆面',stone,'#57a7ff',new THREE.Vector3(7.2,4,-3));
 // utility pipes + green panel
 const utility=new THREE.Group();const pipeMat=new THREE.MeshStandardMaterial({color:0xaeb6b7,roughness:.35,metalness:.65});for(const [x,z,h] of [[6.25,6.1,2.4],[6.45,5.7,1.8],[6.1,5.35,1.4]]){const p=mesh(new THREE.CylinderGeometry(.11,.11,h,16),pipeMat);p.position.set(x,h/2,z);utility.add(p)}const green=mesh(new THREE.BoxGeometry(.75,1.05,.18),new THREE.MeshStandardMaterial({color:0x1d8d49,emissive:0x0d3e20,emissiveIntensity:.35,roughness:.4}));green.position.set(6.3,3.35,5.65);utility.add(green);register('utility','設備區','設備',utility,'#32cad7',new THREE.Vector3(6.4,3.9,5.6));
+// 右側直立 LED 字幕機：寬 32cm × 高 96cm × 深 15cm
+const ledSign=new THREE.Group();
+const ledCabinetMat=new THREE.MeshStandardMaterial({color:0x171b1f,roughness:.42,metalness:.72});
+const ledCabinet=mesh(new THREE.BoxGeometry(.32,.96,.15),ledCabinetMat);ledCabinet.position.y=.48;ledSign.add(ledCabinet);
+const ledFaceMat=new THREE.MeshStandardMaterial({map:ledTex,emissive:0xff1608,emissiveMap:ledTex,emissiveIntensity:.95,roughness:.3,metalness:.08});
+const ledFace=mesh(new THREE.PlaneGeometry(.275,.87),ledFaceMat,false);ledFace.position.set(0,.48,.076);ledSign.add(ledFace);
+const ledTop=mesh(new THREE.BoxGeometry(.34,.035,.17),mats.dark);ledTop.position.set(0,.977,.0);ledSign.add(ledTop);
+const ledBottom=mesh(new THREE.BoxGeometry(.34,.035,.17),mats.dark);ledBottom.position.set(0,.018,.0);ledSign.add(ledBottom);
+ledSign.position.set(5.72,rampY(4.8),4.8);
+register('ledSign','字幕機','字幕機',ledSign,'#a55cff',new THREE.Vector3(.1,1.25,0));
+
 // buildings with balconies
 function building(x,z,w,h,d,mat){const g=new THREE.Group();const body=mesh(new THREE.BoxGeometry(w,h,d),mat);body.position.y=h/2;g.add(body);for(let y=2.3;y<h-1;y+=2.5){for(const sx of [-1,1]){const slab=mesh(new THREE.BoxGeometry(w*.38,.13,.9),mats.concrete);slab.position.set(sx*w*.28,y,d/2+.38);g.add(slab);const rail=mesh(new THREE.BoxGeometry(w*.38,.8,.06),mats.metal);rail.position.set(sx*w*.28,y+.38,d/2+.78);g.add(rail)}}g.position.set(x,0,z);return g}
 const bgBuild=new THREE.Group();bgBuild.add(building(-5.6,-22,7.6,17,5,facadeTex?new THREE.MeshStandardMaterial({map:facadeTex,roughness:.82}):mats.concrete));bgBuild.add(building(4.3,-25,6.5,14,5,new THREE.MeshStandardMaterial({map:facadeTex,roughness:.82,color:0x9aa0a7})));register('building','背景住宅建築','建築',bgBuild,'#57a7ff',new THREE.Vector3(-3,15,-22));
@@ -145,9 +166,9 @@ function markDirty(){document.getElementById('saveState').textContent='● 尚�
 function sizeOf(obj){const b=new THREE.Box3().setFromObject(obj),s=new THREE.Vector3();b.getSize(s);return s}
 function renderLayers(){layersEl.innerHTML=[...modules.values()].map(m=>`<div class="layer ${selected&&m.id===selected.id?'active':''}" data-id="${m.id}"><span class="ldot" style="background:${m.color}"></span><div class="meta"><strong>${m.name}</strong><small>${m.type}</small></div><button class="eye" data-eye="${m.id}">${m.obj.visible?'顯示':'隱藏'}</button></div>`).join('')}
 function renderProps(){if(!selected){propsEl.innerHTML='<div class="help">點選場景中的模組開始編輯。</div>';return}const o=selected.obj,s=sizeOf(o);propsEl.innerHTML=`<h3><span class="ldot" style="background:${selected.color}"></span>${selected.name}<small>編號：${[...modules.keys()].indexOf(selected.id)+1}</small></h3><div class="grid">
-<div><label>材質</label><select id="material"><option>${selected.type==='柵欄'?'霧面金屬':selected.type==='斜坡'||selected.type==='地坪'?'灰色止滑鋪面':selected.type==='牆面'?'白色小磁磚':'高擬真材質'}</option></select></div><div><label>顏色調整</label><input id="color" type="color" value="#ffffff"></div>
+<div><label>材質</label><select id="material"><option>${selected.type==='字幕機'?'LED字幕機（霧面金屬）':selected.type==='柵欄'?'霧面金屬':selected.type==='斜坡'||selected.type==='地坪'?'灰色止滑鋪面':selected.type==='牆面'?'白色小磁磚':'高擬真材質'}</option></select></div><div><label>顏色調整</label><input id="color" type="color" value="#ffffff"></div>
 <div class="full"><label>左右位置 / 高度位置 / 前後位置</label><div class="row3"><input id="px" type="number" step="0.1" value="${o.position.x.toFixed(2)}"><input id="py" type="number" step="0.1" value="${o.position.y.toFixed(2)}"><input id="pz" type="number" step="0.1" value="${o.position.z.toFixed(2)}"></div></div>
-<div><label>高度</label><input value="${s.y.toFixed(2)} 公尺" disabled></div><div><label>長度</label><input value="${Math.max(s.x,s.z).toFixed(2)} 公尺" disabled></div>
+<div><label>寬度</label><input value="${s.x.toFixed(2)} 公尺" disabled></div><div><label>高度</label><input value="${s.y.toFixed(2)} 公尺" disabled></div><div><label>深度</label><input value="${s.z.toFixed(2)} 公尺" disabled></div><div><label>最大尺寸</label><input value="${Math.max(s.x,s.y,s.z).toFixed(2)} 公尺" disabled></div>
 <div class="full"><label>水平旋轉 / 左右縮放 / 前後縮放</label><div class="row3"><input id="ry" type="number" step="1" value="${THREE.MathUtils.radToDeg(o.rotation.y).toFixed(1)}"><input id="sx" type="number" step="0.05" value="${o.scale.x.toFixed(2)}"><input id="sz" type="number" step="0.05" value="${o.scale.z.toFixed(2)}"></div></div></div>
 <div class="btnrow"><button class="btn" id="dup">複製模組</button><button class="btn danger" id="del">刪除模組</button><button class="btn primary" id="fit">聚焦檢視</button></div><div class="help"><b>真實三維模組：</b>移動、旋轉、縮放會直接操作模型。牆面、斜坡、柵欄、招牌、設備、建築與植栽都是獨立物件；照片對位只用來比對現場，不是場景模型本身。</div>`;
 const sync=()=>{o.position.set(+px.value||0,+py.value||0,+pz.value||0);o.rotation.y=THREE.MathUtils.degToRad(+ry.value||0);o.scale.x=Math.max(.05,+sx.value||1);o.scale.z=Math.max(.05,+sz.value||1);updateBox();markDirty()};for(const id of ['px','py','pz','ry','sx','sz'])document.getElementById(id).addEventListener('input',sync);
@@ -173,7 +194,7 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.que
 
 function updateLabels(){for(const m of modules.values()){if(!m.obj.visible||!labelsOn){m.label.style.display='none';continue}m.label.style.display='flex';const p=new THREE.Vector3();new THREE.Box3().setFromObject(m.obj).getCenter(p);p.add(m.labelOffset);p.project(camera);const x=(p.x*.5+.5)*stage.clientWidth,y=(-p.y*.5+.5)*stage.clientHeight;m.label.style.left=x+'px';m.label.style.top=y+'px';m.label.style.opacity=(p.z>-1&&p.z<1)?'1':'0'}}
 function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
-new ResizeObserver(resize).observe(stage);resize();restoreScene();renderLayers();renderProps();selectModule('fence');stage.classList.add('engine-ready');engineBadge.textContent='真實三維 · 網頁圖形引擎';
+new ResizeObserver(resize).observe(stage);resize();restoreScene();renderLayers();renderProps();selectModule('ledSign');stage.classList.add('engine-ready');engineBadge.textContent='真實三維 · 網頁圖形引擎';
 function loop(){requestAnimationFrame(loop);controls.update();if(boxHelper&&selected)boxHelper.update();updateLabels();renderer.render(scene,camera)}loop();
 </script>
 <script>
